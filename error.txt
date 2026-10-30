@@ -1,0 +1,16 @@
+Executing pre-compile tasks…
+Running 'before' tasks
+Checking sources
+Copying resources… [api]
+Dependency analysis found 0 affected files
+Updating dependency information… [api]
+Parsing java… [api]
+Dependency analysis found 0 affected files
+java: Cannot compile module 'api' configured for JVM target 5: the specified fallback SDK version 17 does not support the required jvm target 5.
+java: Please add JDK 8 or later to Project Structure | Platform Settings | SDKs. The added JDK should support cross-compilation for JVM target 5. This JDK will be automatically picked by the IDE to compile for older JVM targets.
+Errors occurred while compiling module 'api'
+Finished, saving caches…
+Builder Java requested build stop
+Executing post-compile tasks…
+Synchronizing output directories…
+30/10/26, 10:40 - Build completed with 2 errors and 0 warnings in 560 ms
