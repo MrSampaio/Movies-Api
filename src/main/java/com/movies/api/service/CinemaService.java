@@ -1,8 +1,6 @@
 package com.movies.api.service;
 
-import com.movies.api.dto.MovieDetailsDTO;
-import com.movies.api.dto.SeatDTO;
-import com.movies.api.dto.ShowtimeDTO;
+import com.movies.api.dto.*;
 import com.movies.api.entity.Movie;
 import com.movies.api.entity.ShowtimeSeat;
 import com.movies.api.repository.MovieRepository;
@@ -66,5 +64,25 @@ public class CinemaService {
                         seat.getIsAvailable()
                 ))
                 .toList();
+    }
+
+    // método para criar filme, recebe o filme e converte
+    public MovieDTO createMovie(CreateMovieDTO createDTO) {
+
+        // cria uma entidade vazia e preenche com os dados que vieram do POST
+        Movie newMovie = new Movie();
+        newMovie.setTitle(createDTO.title());
+        newMovie.setSynopsis(createDTO.synopsis());
+        newMovie.setCoverUrl(createDTO.coverUrl());
+
+       // salva no banco com spring data
+        Movie savedMovie = movieRepository.save(newMovie);
+
+        return new MovieDTO(
+                savedMovie.getId(),
+                savedMovie.getTitle(),
+                savedMovie.getSynopsis(),
+                savedMovie.getCoverUrl()
+        );
     }
 }
