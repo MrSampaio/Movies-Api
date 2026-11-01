@@ -1,15 +1,17 @@
-FROM ubuntu:latest AS build
+FROM maven:3.9-eclipse-temurin-26 AS build
+WORKDIR /app
 
-RUN apt-get update
-RUN apt-get install openjdk-26-jdk -y
-COPY . .
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-RUN apt-get install maven -y
-RUN mvn clean install
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-FROM openjdk:26-jdk-slim
+FROM eclipse-temurin:26-jre
+WORKDIR /app
 
 EXPOSE 8080
-COPY --from=build /target/render_deploy-1.0.0.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY --from=build /app/target/*.jar app.jar
+
+ENTRYPOINT ["java", "-Xmx512m", "-jar", "app.jar"]
