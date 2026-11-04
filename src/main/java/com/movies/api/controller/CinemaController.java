@@ -1,9 +1,6 @@
 package com.movies.api.controller;
 
-import com.movies.api.dto.CreateMovieDTO;
-import com.movies.api.dto.MovieDTO;
-import com.movies.api.dto.MovieDetailsDTO;
-import com.movies.api.dto.SeatDTO;
+import com.movies.api.dto.*;
 import com.movies.api.service.CinemaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,6 +48,22 @@ public class CinemaController {
         // retorna status 201 Created com o corpo do filme criado
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMovie);
     }
+
+    /**
+     * Rota consumida para adicionar um novo assento a uma sessão específica
+     * URL: POST http://localhost:8080/api/cinema/showtimes/1/seats
+     * Body: JSON com rowLetter, seatNumber e isAvailable
+     */
+    @PostMapping("/showtimes/{id}/seats")
+    public ResponseEntity<SeatDTO> createSeat(
+            @PathVariable Long id,
+            @RequestBody CreateSeatDTO dto) {
+
+        SeatDTO createdSeat = cinemaService.createSeat(id, dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSeat);
+    }
+
 
 //    {
 //        "title": "A Festa da Salsicha",

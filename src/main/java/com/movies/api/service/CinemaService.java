@@ -2,6 +2,7 @@ package com.movies.api.service;
 
 import com.movies.api.dto.*;
 import com.movies.api.entity.Movie;
+import com.movies.api.entity.Showtime;
 import com.movies.api.entity.ShowtimeSeat;
 import com.movies.api.repository.MovieRepository;
 import com.movies.api.repository.ShowtimeRepository;
@@ -83,6 +84,30 @@ public class CinemaService {
                 savedMovie.getTitle(),
                 savedMovie.getSynopsis(),
                 savedMovie.getCoverUrl()
+        );
+    }
+
+    public SeatDTO createSeat(Long showtimeId, CreateSeatDTO createDTO) {
+        // 1. Busca o horário no banco (se não existir, dá erro 404)
+        Showtime showtime = showtimeRepository.findById(showtimeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Horário não encontrado"));
+
+        // 2. Cria a entidade do assento e preenche os dados
+        ShowtimeSeat newSeat = new ShowtimeSeat();
+        newSeat.setShowtime(showtime); // Faz o vínculo (Chave Estrangeira)
+        newSeat.setRowLetter(createDTO.rowLetter());
+        newSeat.setSeatNumber(createDTO.seatNumber());
+        newSeat.setIsAvailable(createDTO.isAvailable());
+
+        // 3. Salva no banco de dados
+        ShowtimeSeat savedSeat = showtimeSeatRepository.save(newSeat);
+
+        // 4. Retorna formatado no DTO de saída
+        return new SeatDTO(
+                savedSeat.getId(),
+                savedSeat.getRowLetter(),
+                savedSeat.getSeatNumber(),
+                savedSeat.getIsAvailable()
         );
     }
 }
