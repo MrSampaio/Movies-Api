@@ -55,9 +55,7 @@ public class CinemaController {
      * Body: JSON com rowLetter, seatNumber e isAvailable
      */
     @PostMapping("/showtimes/{id}/seats")
-    public ResponseEntity<SeatDTO> createSeat(
-            @PathVariable Long id,
-            @RequestBody CreateSeatDTO dto) {
+    public ResponseEntity<SeatDTO> createSeat(@PathVariable Long id, @RequestBody CreateSeatDTO dto) {
 
         SeatDTO createdSeat = cinemaService.createSeat(id, dto);
 
