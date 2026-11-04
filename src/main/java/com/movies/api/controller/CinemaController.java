@@ -42,10 +42,10 @@ public class CinemaController {
      * Body: JSON com title, synopsis e coverUrl
      */
     @PostMapping("/movies")
-    public ResponseEntity<MovieDTO> createMovie(@RequestBody CreateMovieDTO dto) {
-        MovieDTO createdMovie = cinemaService.createMovie(dto);
+    public ResponseEntity<MovieDetailsDTO> createMovie(@RequestBody CreateMovieDTO dto) {
+        MovieDetailsDTO createdMovie = cinemaService.createMovie(dto);
 
-        // retorna status 201 Created com o corpo do filme criado
+        // retorna status 201 Created com o corpo do filme e sessões criadas
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMovie);
     }
 

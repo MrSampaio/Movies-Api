@@ -68,41 +68,49 @@ public class CinemaService {
     }
 
     // método para criar filme, recebe o filme e converte
-    public MovieDTO createMovie(CreateMovieDTO createDTO) {
-
-        // cria uma entidade vazia e preenche com os dados que vieram do POST
+    public MovieDetailsDTO createMovie(CreateMovieDTO createDTO) {
         Movie newMovie = new Movie();
         newMovie.setTitle(createDTO.title());
         newMovie.setSynopsis(createDTO.synopsis());
         newMovie.setCoverUrl(createDTO.coverUrl());
-
-       // salva no banco com spring data
         Movie savedMovie = movieRepository.save(newMovie);
 
-        return new MovieDTO(
+        List<ShowtimeDTO> showtimeDTOs = new java.util.ArrayList<>();
+
+        if (createDTO.showtimes() != null && !createDTO.showtimes().isEmpty()) {
+            for (java.time.LocalDateTime startTime : createDTO.showtimes()) {
+                Showtime newShowtime = new Showtime();
+                newShowtime.setMovie(savedMovie); // Vincula ao filme recém-criado
+                newShowtime.setStartTime(startTime);
+
+                Showtime savedShowtime = showtimeRepository.save(newShowtime);
+
+                showtimeDTOs.add(new ShowtimeDTO(savedShowtime.getId(), savedShowtime.getStartTime()));
+            }
+        }
+
+        return new MovieDetailsDTO(
                 savedMovie.getId(),
                 savedMovie.getTitle(),
                 savedMovie.getSynopsis(),
-                savedMovie.getCoverUrl()
+                savedMovie.getCoverUrl(),
+                showtimeDTOs
         );
     }
 
     public SeatDTO createSeat(Long showtimeId, CreateSeatDTO createDTO) {
-        // 1. Busca o horário no banco (se não existir, dá erro 404)
         Showtime showtime = showtimeRepository.findById(showtimeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Horário não encontrado"));
 
-        // 2. Cria a entidade do assento e preenche os dados
         ShowtimeSeat newSeat = new ShowtimeSeat();
-        newSeat.setShowtime(showtime); // Faz o vínculo (Chave Estrangeira)
+        newSeat.setShowtime(showtime);
         newSeat.setRowLetter(createDTO.rowLetter());
         newSeat.setSeatNumber(createDTO.seatNumber());
         newSeat.setIsAvailable(createDTO.isAvailable());
 
-        // 3. Salva no banco de dados
         ShowtimeSeat savedSeat = showtimeSeatRepository.save(newSeat);
 
-        // 4. Retorna formatado no DTO de saída
+
         return new SeatDTO(
                 savedSeat.getId(),
                 savedSeat.getRowLetter(),
